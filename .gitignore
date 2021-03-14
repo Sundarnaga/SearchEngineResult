@@ -1,0 +1,11 @@
+.vs/
+SearchEngine.Infra/bin/
+SearchEngine.Infra/obj/project.assets.json
+SearchEngine.Infra/obj/
+SearchEngineResults.Interface/bin/
+SearchEngineResults.Interface/obj/
+SearchEngineResults.Models/bin/
+SearchEngineResults.Models/obj/
+SearchEngineResults.Test/obj/
+SearchEngineResults/bin/
+SearchEngineResults/obj/
