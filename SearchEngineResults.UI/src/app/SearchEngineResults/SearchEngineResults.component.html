@@ -1,0 +1,63 @@
+<div class="jumbtron">
+  <h1 class="display-10 text-center">Search Engine Tool</h1>
+  <hr>
+  <div class="row">
+    <div class="col-md-5">
+      <form #form="ngForm" autocomplete="off">
+        <div class="form-group">
+          <label>Keywords to Search</label>
+          <div class="input-group">
+            <input name="keywords" [(ngModel)]="keywords" class="form-control"
+              placeholder="Use comma to add multiple keywords" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Website URL to match in the results</label>
+          <div class="input-group">
+            <input name="urlToMatch" [(ngModel)]="urlToMatch" class="form-control"
+              placeholder="Website URL to match in the results" required>
+          </div>
+        </div>
+        <div class="form-group" *ngIf='engines.length > 0'>
+          <label>Search Engine List</label>
+          <div class="input-group" *ngFor="let engine of engines">
+            <div>
+              <input type="checkbox" checked="true" (change)="onChange(engine, $event.target.checked)">
+              {{engine}}
+            </div>
+          </div>
+          <br />
+          <div>
+            <button name="Search" class="btn-primary" style="margin-left: 370px; position:relative;top:-60px;"
+              (click)=onClick()>Search</button>
+          </div>
+        </div>
+        <div class="form-group" *ngIf='engines.length == 0'>
+          <strong>Search Engine Not availble. Not able proceed</strong>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-1">
+    </div>
+      <div class="col-md-5" *ngIf='searchResults.length > 0'>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Search Engine</th>
+              <th scope="col" >Keyword</th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let res of searchResults">
+              <td>
+                {{ res.searchEngine }}
+              </td>
+              <td>{{ res.keyWord}}</td>
+              <td>{{ res.result}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
