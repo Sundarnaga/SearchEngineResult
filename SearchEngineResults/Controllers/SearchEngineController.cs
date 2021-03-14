@@ -24,8 +24,6 @@ namespace SearchEngineResults.Api.Controllers
         private readonly IHttpClientFactory clientFactory;
         private SearchEngineLogic searchEngineLogic;
         private IMemoryCache cache;
-        private const string searchResultResponseKey = "searchResultsResponse";
-        private const string searchResultRequestKey = "searchResultsRequest";
 
         public SearchEngineController(ILoggerManager logger, IConfiguration config, IMemoryCache memoryCache, IHttpClientFactory httpClientFactory)
         {
@@ -69,26 +67,26 @@ namespace SearchEngineResults.Api.Controllers
 
             IEnumerable<SearchResult> searchResults = null;
             List<SearchParameter> searchParameterList = null;
-            if (!cache.TryGetValue<List<SearchParameter>>(searchResultRequestKey, out searchParameterList))
+            if (!cache.TryGetValue<List<SearchParameter>>(CONSTANTS.CACHE_SEARCHRESULTREQUESTKEY, out searchParameterList))
             {
                 searchParameterList = request.SearchParameter;
-                cache.Set<List<SearchParameter>>(searchResultRequestKey, searchParameterList, CacheExpirySetting());
+                cache.Set<List<SearchParameter>>(CONSTANTS.CACHE_SEARCHRESULTREQUESTKEY, searchParameterList, CacheExpirySetting());
             }
 
             if(!searchParameterList.ScrambledEquals(request.SearchParameter))
             {
                 searchParameterList = request.SearchParameter;
-                cache.Set<List<SearchParameter>>(searchResultRequestKey, searchParameterList, CacheExpirySetting());
-                if (cache.TryGetValue<IEnumerable<SearchResult>>(searchResultResponseKey, out searchResults))
+                cache.Set<List<SearchParameter>>(CONSTANTS.CACHE_SEARCHRESULTREQUESTKEY, searchParameterList, CacheExpirySetting());
+                if (cache.TryGetValue<IEnumerable<SearchResult>>(CONSTANTS.CACHE_SEARCHRESULTRESPONSEKEY, out searchResults))
                 {
-                    cache.Remove(searchResultResponseKey);
+                    cache.Remove(CONSTANTS.CACHE_SEARCHRESULTRESPONSEKEY);
                 }
             }
 
-            if (!cache.TryGetValue<IEnumerable<SearchResult>>(searchResultResponseKey, out searchResults))
+            if (!cache.TryGetValue<IEnumerable<SearchResult>>(CONSTANTS.CACHE_SEARCHRESULTRESPONSEKEY, out searchResults))
             {
                 searchResults = await searchEngineLogic.GetSearchResults(request.SearchParameter,clientFactory);              
-                cache.Set<IEnumerable<SearchResult>>(searchResultResponseKey, searchResults, CacheExpirySetting());
+                cache.Set<IEnumerable<SearchResult>>(CONSTANTS.CACHE_SEARCHRESULTRESPONSEKEY, searchResults, CacheExpirySetting());
             }
 
             return Ok(searchResults);
@@ -102,7 +100,7 @@ namespace SearchEngineResults.Api.Controllers
         private MemoryCacheEntryOptions CacheExpirySetting()
         {
             MemoryCacheEntryOptions cacheExpirationOptions = new MemoryCacheEntryOptions();
-            cacheExpirationOptions.AbsoluteExpiration = DateTime.Now.AddMinutes(60);
+            cacheExpirationOptions.AbsoluteExpiration = DateTime.Now.AddMinutes(config.GetValue<int>(CONSTANTS.CONFIG_CACHEEXPIRETIME));
             cacheExpirationOptions.Priority = CacheItemPriority.Normal;
             return cacheExpirationOptions;
         }

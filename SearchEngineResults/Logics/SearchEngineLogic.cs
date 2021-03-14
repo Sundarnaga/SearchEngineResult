@@ -24,7 +24,7 @@ namespace SearchEngineResults.Api.Logics
             this._config = config;
             this._logger = logger;
             searchEngineList = new List<SearchEngine>();
-            _config.GetSection("SearchEngine").Bind(searchEngineList);
+            _config.GetSection(CONSTANTS.CONFIG_SEARCHENGINE).Bind(searchEngineList);
         }
 
 
